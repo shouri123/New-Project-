@@ -135,6 +135,34 @@
             transition: opacity 0.3s, transform 0.3s, visibility 0s;
         }
 
+        /* --- UI Overlays --- */
+        .drawer-right {
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .drawer-right.open {
+            transform: translateX(0);
+        }
+        
+        /* Collection Overlay Slide Up */
+        .slide-up-overlay {
+            transform: translateY(100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide-up-overlay.open {
+            transform: translateY(0);
+        }
+
+        .overlay-fade {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay-fade.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         /* --- Scrollbar --- */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #fff; }
@@ -166,8 +194,8 @@
 
             <!-- Icons -->
             <div class="flex items-center gap-6">
-                <button class="hover-trigger text-xs font-bold uppercase hidden md:block">Search</button>
-                <button class="hover-trigger relative" onclick="toggleCart()">
+                <button class="hover-trigger text-xs font-bold uppercase hidden md:block" onclick="toggleSearch()">Search</button>
+                <button class="hover-trigger relative" onclick="toggleCartDrawer()">
                     <span class="text-xs font-bold uppercase">Cart (<span id="cart-count">0</span>)</span>
                 </button>
             </div>
@@ -181,6 +209,77 @@
              <a href="#about" class="text-3xl serif italic" onclick="toggleMenu()">About</a>
         </div>
     </nav>
+
+    <!-- SEARCH OVERLAY -->
+    <div id="search-overlay" class="fixed inset-0 bg-white z-[60] overlay-fade flex flex-col items-center justify-center p-6">
+        <button class="absolute top-6 right-6 md:top-12 md:right-12 hover-trigger" onclick="toggleSearch()">
+            <i data-lucide="x" class="w-8 h-8 md:w-12 md:h-12 text-black"></i>
+        </button>
+        <div class="w-full max-w-4xl text-center">
+            <p class="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-8">Type to Search</p>
+            <input type="text" placeholder="Start typing..." class="w-full bg-transparent text-4xl md:text-7xl font-serif italic text-black border-b-2 border-gray-100 focus:border-black outline-none pb-4 text-center placeholder-gray-200 transition-colors">
+            <div class="mt-12 flex justify-center gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <a href="#" class="hover:text-black transition-colors">Coats</a>
+                <a href="#" class="hover:text-black transition-colors">New Arrivals</a>
+                <a href="#" class="hover:text-black transition-colors">Accessories</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div id="cart-drawer-backdrop" class="fixed inset-0 bg-black/50 z-[60] overlay-fade backdrop-blur-sm" onclick="toggleCartDrawer()"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full md:w-[500px] bg-white z-[61] drawer-right shadow-2xl flex flex-col">
+        <div class="p-6 md:p-8 flex justify-between items-center border-b border-gray-100">
+            <h2 class="text-2xl font-serif italic">Your Cart</h2>
+            <button onclick="toggleCartDrawer()" class="hover:opacity-50"><i data-lucide="x"></i></button>
+        </div>
+        
+        <!-- Cart Items Area -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+            <!-- Empty State -->
+            <div id="cart-empty-state" class="h-full flex flex-col items-center justify-center text-gray-400">
+                <span class="text-sm uppercase tracking-widest mb-4">Your cart is empty</span>
+                <button onclick="toggleCartDrawer()" class="border-b border-black text-black pb-1 text-xs uppercase font-bold">Continue Shopping</button>
+            </div>
+        </div>
+
+        <!-- Cart Footer -->
+        <div class="p-6 md:p-8 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-end mb-6">
+                <span class="text-xs font-bold uppercase tracking-widest text-gray-500">Subtotal</span>
+                <span class="text-2xl font-serif italic" id="cart-total">$0.00</span>
+            </div>
+            <button class="w-full bg-black text-white py-4 text-xs font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors">Checkout</button>
+        </div>
+    </div>
+
+    <!-- DYNAMIC COLLECTION LIBRARY OVERLAY -->
+    <div id="collection-library" class="fixed inset-0 bg-white z-[80] slide-up-overlay overflow-y-auto">
+        <!-- Header -->
+        <div class="sticky top-0 bg-white/90 backdrop-blur-md z-10 p-6 md:p-8 border-b border-gray-100 flex justify-between items-center">
+             <div class="flex flex-col">
+                 <span id="library-subtitle" class="text-xs font-bold uppercase tracking-widest text-gray-400">Collection</span>
+                 <h2 id="library-title" class="text-2xl md:text-4xl font-serif italic">The Library</h2>
+             </div>
+             <button onclick="closeLibrary()" class="group flex items-center gap-3 border border-gray-200 px-4 py-2 rounded-full hover:bg-black hover:text-white transition-all">
+                 <span class="text-xs font-bold uppercase tracking-widest">Close</span>
+                 <i data-lucide="x" class="w-4 h-4"></i>
+             </button>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="p-6 md:p-12">
+            <div id="library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dynamic Content Will Be Injected Here -->
+            </div>
+        </div>
+        
+        <!-- Library Footer -->
+        <div class="p-12 text-center bg-gray-50 mt-12">
+            <p class="text-xs font-mono text-gray-400">END OF COLLECTION</p>
+        </div>
+    </div>
+
 
     <!-- HERO SECTION: Creative Editorial Layout -->
     <section class="relative h-screen w-full overflow-hidden flex flex-col justify-end pb-12 bg-[#f4f4f4]">
@@ -275,21 +374,24 @@
         <div class="flex justify-between items-end mb-12 px-2">
             <h2 class="text-6xl md:text-8xl font-bold opacity-5 pointer-events-none absolute left-0 translate-y-12">VISUALS</h2>
             <h2 class="text-2xl font-bold relative z-10 pl-4">Visual Diary</h2>
-            <span class="text-xs font-mono relative z-10">[ 001 - 005 ]</span>
+            <span class="text-xs font-mono relative z-10">[ 001 - 008 ]</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-[200px]">
             <!-- Item 1 (Large) -->
-            <div class="md:col-span-6 md:row-span-3 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger">
+            <div class="md:col-span-6 md:row-span-3 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" onclick="openLibrary('obsidian')">
                 <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Look 1">
                 <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span class="text-white border border-white px-6 py-2 rounded-full uppercase text-xs tracking-widest backdrop-blur-md">Explore</span>
+                    <span class="text-white border border-white px-6 py-2 rounded-full uppercase text-xs tracking-widest backdrop-blur-md">Explore Obsidian</span>
                 </div>
             </div>
 
             <!-- Item 2 (Tall) -->
-            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.1s;">
+            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.1s;" onclick="openLibrary('ethereal')">
                  <img src="https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Look 2">
+                 <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white border border-white px-4 py-2 rounded-full uppercase text-[10px] tracking-widest backdrop-blur-md">View Ethereal</span>
+                </div>
             </div>
 
             <!-- Item 3 (Small Text Block) -->
@@ -299,15 +401,47 @@
             </div>
 
             <!-- Item 4 (Square) -->
-            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.1s;">
+            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.1s;" onclick="openLibrary('urban')">
                  <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Look 3">
+                 <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white border border-white px-4 py-2 rounded-full uppercase text-[10px] tracking-widest backdrop-blur-md">View Urban</span>
+                </div>
             </div>
             
              <!-- Item 5 (Wide) -->
-            <div class="md:col-span-6 md:row-span-1 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.3s;">
+            <div class="md:col-span-6 md:row-span-1 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.3s;" onclick="openLibrary('obsidian')">
                  <img src="https://images.unsplash.com/photo-1550614000-4b9519e02d48?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Look 4">
                  <div class="absolute bottom-4 left-4 text-white font-bold uppercase tracking-wider text-xs z-10">Campaign 2025</div>
                  <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+            </div>
+
+            <!-- New Item 6: Men's Look (Tall) -->
+            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.1s;" onclick="openLibrary('menswear')">
+                <img src="https://images.unsplash.com/photo-1488161628813-99425260bdd6?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Men's Look 1">
+                <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                   <span class="text-white text-xs font-bold uppercase tracking-widest bg-black/20 backdrop-blur px-2 py-1">Menswear</span>
+                </div>
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white border border-white px-4 py-2 rounded-full uppercase text-[10px] tracking-widest backdrop-blur-md">Explore Mens</span>
+                </div>
+            </div>
+
+            <!-- New Item 7: Men's Look (Tall) -->
+            <div class="md:col-span-3 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.2s;" onclick="openLibrary('menswear')">
+                <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Men's Look 2">
+                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white border border-white px-4 py-2 rounded-full uppercase text-[10px] tracking-widest backdrop-blur-md">View Details</span>
+                </div>
+            </div>
+
+            <!-- New Item 8: Men's Look (Wide) -->
+            <div class="md:col-span-6 md:row-span-2 group relative overflow-hidden bg-gray-100 cursor-pointer fade-up hover-trigger" style="transition-delay: 0.3s;" onclick="openLibrary('menswear')">
+                <img src="https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=1200&auto=format&fit=crop" class="w-full h-full object-cover img-scale" alt="Men's Look 3">
+                <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                <div class="absolute top-4 right-4 text-white text-xs font-mono tracking-widest mix-blend-difference">THE EDIT</div>
+                 <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white border border-white px-6 py-2 rounded-full uppercase text-xs tracking-widest backdrop-blur-md">Open Edit</span>
+                </div>
             </div>
         </div>
     </section>
@@ -317,17 +451,18 @@
         <div class="max-w-[90%] mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/20 pb-8 fade-up">
                 <h2 class="text-4xl md:text-6xl font-serif">Selected Works</h2>
-                <div class="flex gap-4 mt-4 md:mt-0">
-                    <button class="text-xs font-bold uppercase border border-white/30 px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors hover-trigger">All</button>
-                    <button class="text-xs font-bold uppercase border border-white/30 px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors hover-trigger">Outerwear</button>
-                    <button class="text-xs font-bold uppercase border border-white/30 px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors hover-trigger">Tops</button>
+                <div class="flex gap-4 mt-4 md:mt-0" id="filter-container">
+                    <!-- Filter Buttons -->
+                    <button class="filter-btn text-xs font-bold uppercase border border-white bg-white text-black px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all hover-trigger" data-filter="all">All</button>
+                    <button class="filter-btn text-xs font-bold uppercase border border-white/30 text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all hover-trigger" data-filter="outerwear">Outerwear</button>
+                    <button class="filter-btn text-xs font-bold uppercase border border-white/30 text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-all hover-trigger" data-filter="tops">Tops</button>
                 </div>
             </div>
 
             <!-- Horizontal Scroll Product Slider -->
-            <div class="flex overflow-x-auto gap-8 pb-12 snap-x scrollbar-hide">
-                <!-- Product 1 -->
-                <div class="min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger" onclick="addToCart(this)">
+            <div class="flex overflow-x-auto gap-8 pb-12 snap-x scrollbar-hide" id="products-container">
+                <!-- Product 1: Outerwear -->
+                <div class="product-card min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger cursor-pointer" data-category="outerwear" onclick="addToCart(this)">
                     <div class="relative aspect-[3/4] overflow-hidden bg-gray-900 mb-6">
                         <img src="https://images.unsplash.com/photo-1551488852-0801751acbe3?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Product">
                         <div class="absolute top-4 right-4 bg-white text-black text-xs font-bold px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">QUICK ADD</div>
@@ -341,8 +476,8 @@
                     </div>
                 </div>
 
-                <!-- Product 2 -->
-                <div class="min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger" style="transition-delay: 100ms;" onclick="addToCart(this)">
+                <!-- Product 2: Tops -->
+                <div class="product-card min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger cursor-pointer" data-category="tops" style="transition-delay: 100ms;" onclick="addToCart(this)">
                     <div class="relative aspect-[3/4] overflow-hidden bg-gray-900 mb-6">
                         <img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Product">
                          <div class="absolute top-4 right-4 bg-white text-black text-xs font-bold px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">QUICK ADD</div>
@@ -356,8 +491,8 @@
                     </div>
                 </div>
 
-                <!-- Product 3 -->
-                <div class="min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger" style="transition-delay: 200ms;" onclick="addToCart(this)">
+                <!-- Product 3: Outerwear -->
+                <div class="product-card min-w-[300px] md:min-w-[400px] snap-center group fade-up hover-trigger cursor-pointer" data-category="outerwear" style="transition-delay: 200ms;" onclick="addToCart(this)">
                     <div class="relative aspect-[3/4] overflow-hidden bg-gray-900 mb-6">
                         <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" alt="Product">
                          <div class="absolute top-4 right-4 bg-white text-black text-xs font-bold px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">QUICK ADD</div>
@@ -432,10 +567,13 @@
 
         document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-        // --- 4. Cart Logic with Toast ---
-        let cartCount = 0;
+        // --- 4. Cart & UI Logic ---
+        let cart = [];
         const cartBadge = document.getElementById('cart-count');
         const toast = document.getElementById('toast');
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartEmptyState = document.getElementById('cart-empty-state');
+        const cartTotalEl = document.getElementById('cart-total');
 
         function showToast(message) {
             toast.innerText = message;
@@ -444,28 +582,237 @@
         }
 
         function addToCart(el) {
-            cartCount++;
-            cartBadge.innerText = cartCount;
-            
-            // Visual feedback
+            // Extract data
+            const title = el.querySelector('h3').innerText;
+            const priceStr = el.querySelector('.serif').innerText;
+            const price = parseFloat(priceStr.replace('$', ''));
+            const img = el.querySelector('img').src;
+
+            // Add to state
+            cart.push({ title, price, img });
+            updateCartCount();
+            renderCartItems();
+
+            // Visual feedback on card
             const originalText = el.querySelector('h3').innerText;
             const titleEl = el.querySelector('h3');
             titleEl.innerText = "Added to Cart";
             titleEl.classList.add('italic', 'text-green-400');
             
+            showToast(`Added ${title} to cart`);
+
             setTimeout(() => {
                 titleEl.innerText = originalText;
                 titleEl.classList.remove('italic', 'text-green-400');
             }, 1500);
         }
 
-        function toggleCart() {
-            showToast(`Cart contains ${cartCount} items.`);
+        // Overloaded function to handle adding from library where DOM structure differs slightly
+        function addToCartFromLibrary(title, price, imgSrc, btnElement) {
+            cart.push({ title, price, img: imgSrc });
+            updateCartCount();
+            renderCartItems();
+            
+            const originalText = btnElement.innerText;
+            btnElement.innerText = "Added";
+            btnElement.classList.add('bg-black', 'text-white');
+            btnElement.classList.remove('bg-white', 'text-black');
+            
+            showToast(`Added ${title} to cart`);
+
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.classList.remove('bg-black', 'text-white');
+                btnElement.classList.add('bg-white', 'text-black');
+            }, 1500);
+        }
+
+        function updateCartCount() {
+            cartBadge.innerText = cart.length;
+        }
+
+        function renderCartItems() {
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(cartEmptyState);
+                cartTotalEl.innerText = "$0.00";
+                cartEmptyState.style.display = 'flex';
+                return;
+            }
+
+            // Calculate total
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            cartTotalEl.innerText = '$' + total.toFixed(2);
+
+            // Render items
+            cartItemsContainer.innerHTML = cart.map((item, index) => `
+                <div class="flex gap-4 items-center animate-[fadeIn_0.5s_ease]">
+                    <div class="w-20 h-24 bg-gray-100 flex-shrink-0">
+                        <img src="${item.img}" class="w-full h-full object-cover" alt="${item.title}">
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-sm font-medium uppercase tracking-wide">${item.title}</h4>
+                        <p class="text-xs text-gray-500 mt-1">Size: M</p>
+                        <p class="text-sm font-serif italic mt-1">$${item.price}</p>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-black transition-colors">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            // Re-init icons for the new HTML
+            lucide.createIcons();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartCount();
+            renderCartItems();
+        }
+
+        function toggleCartDrawer() {
+            const drawer = document.getElementById('cart-drawer');
+            const backdrop = document.getElementById('cart-drawer-backdrop');
+            
+            drawer.classList.toggle('open');
+            backdrop.classList.toggle('open');
+            
+            if(drawer.classList.contains('open')) {
+                renderCartItems();
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function toggleSearch() {
+            const overlay = document.getElementById('search-overlay');
+            overlay.classList.toggle('open');
+            
+            if(overlay.classList.contains('open')) {
+                 overlay.querySelector('input').focus();
+                 document.body.style.overflow = 'hidden';
+            } else {
+                 document.body.style.overflow = '';
+            }
         }
 
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('-translate-x-full');
+        }
+
+        // --- 5. Filtering Logic ---
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const products = document.querySelectorAll('.product-card');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update button styles
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-white', 'text-black', 'border-white');
+                    b.classList.add('text-white', 'border-white/30');
+                });
+                btn.classList.remove('text-white', 'border-white/30');
+                btn.classList.add('bg-white', 'text-black', 'border-white');
+
+                // Filter items
+                const filter = btn.getAttribute('data-filter');
+                products.forEach(product => {
+                    if (filter === 'all' || product.getAttribute('data-category') === filter) {
+                        product.style.display = 'block';
+                    } else {
+                        product.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // --- 6. Dynamic Collection Library Logic ---
+        
+        // Mock Data for Collections
+        const collectionsData = {
+            'obsidian': {
+                title: 'The Obsidian Series',
+                subtitle: 'Dark Matter / Winter 2025',
+                items: [
+                    { title: 'Void Coat', price: 850, img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Shadow Trousers', price: 320, img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Eclipse Knit', price: 290, img: 'https://images.unsplash.com/photo-1550614000-4b9519e02d48?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Carbon Shell', price: 600, img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop' }
+                ]
+            },
+            'menswear': {
+                title: 'Menswear Edit',
+                subtitle: 'Structure & Form / Vol. II',
+                items: [
+                    { title: 'Architect Blazer', price: 550, img: 'https://images.unsplash.com/photo-1488161628813-99425260bdd6?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Utility Cargo', price: 280, img: 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Oxford Overshirt', price: 220, img: 'https://images.unsplash.com/photo-1504198458649-3128b932f49e?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Tech Runner', price: 350, img: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=800&auto=format&fit=crop' }
+                ]
+            },
+            'ethereal': {
+                title: 'Ethereal Collection',
+                subtitle: 'Light & Air / Spring 2025',
+                items: [
+                    { title: 'Cloud Dress', price: 420, img: 'https://images.unsplash.com/photo-1506619216599-9d16d0903dfd?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Mist Silk Top', price: 180, img: 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Pearl Tunic', price: 300, img: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Linen Wrap', price: 250, img: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=800&auto=format&fit=crop' }
+                ]
+            },
+            'urban': {
+                title: 'Urban Utility',
+                subtitle: 'City Adaptation / Core',
+                items: [
+                    { title: 'Asphalt Jacket', price: 480, img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Concrete Denim', price: 240, img: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Signal Vest', price: 190, img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop' },
+                    { title: 'Metro Boots', price: 380, img: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=800&auto=format&fit=crop' }
+                ]
+            }
+        };
+
+        function openLibrary(collectionId) {
+            const data = collectionsData[collectionId];
+            if (!data) return;
+
+            // Populate Header
+            document.getElementById('library-title').innerText = data.title;
+            document.getElementById('library-subtitle').innerText = data.subtitle;
+
+            // Populate Grid
+            const grid = document.getElementById('library-grid');
+            grid.innerHTML = data.items.map(item => `
+                <div class="group cursor-pointer">
+                    <div class="relative aspect-[3/4] bg-gray-100 mb-4 overflow-hidden">
+                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <button onclick="addToCartFromLibrary('${item.title}', ${item.price}, '${item.img}', this)" 
+                                class="absolute bottom-4 right-4 bg-white text-black text-xs font-bold uppercase px-4 py-2 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all hover:bg-black hover:text-white">
+                            Add to Cart
+                        </button>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium uppercase tracking-wide">${item.title}</h3>
+                        <span class="text-sm font-serif italic text-gray-500">$${item.price}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Open Overlay
+            const overlay = document.getElementById('collection-library');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            
+            lucide.createIcons();
+        }
+
+        function closeLibrary() {
+            const overlay = document.getElementById('collection-library');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
         }
     </script>
 </body>
